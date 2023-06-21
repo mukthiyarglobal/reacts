@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: materialdash
+  namespace: mydemocluster
 spec:
   selector:
     matchLabels:
@@ -27,7 +28,6 @@ spec:
             cpu: "0.2"
       imagePullSecrets:
         - name: myregistrykey
-    namespace: mydemocluster
 
 ---
 
