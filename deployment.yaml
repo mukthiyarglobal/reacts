@@ -27,6 +27,7 @@ spec:
             cpu: "0.2"
       imagePullSecrets:
         - name: myregistrykey
+    namespace: mydemocluster
 
 ---
 
