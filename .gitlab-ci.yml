@@ -2,7 +2,9 @@ image: node:16
 stages:          # List of stages for jobs, and their order of execution
   - build
   - test
-  - deploy
+  - build docker image
+  - push image to acr
+  - deploy to K8S
 
 build-job:
   stage: build
@@ -28,3 +30,10 @@ sonarcloud-check:
     - merge_requests
     - main
     - develop
+
+docker_build:
+  stage: build docker image
+  script:
+    - docker build -t mdpro .
+    - docker login -u $DB_USER -p $DB_PASSWORD
+    - docker push materialdashdemo.azurecr.io/mdpro:latest
