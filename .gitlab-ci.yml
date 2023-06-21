@@ -2,8 +2,7 @@ image: node:16
 stages:          # List of stages for jobs, and their order of execution
   - build
   - test
-  - build docker image
-  - push image to acr
+  - b&p acr
   - deploy to K8S
 
 build-job:
@@ -32,7 +31,7 @@ sonarcloud-check:
     - develop
 
 docker_build:
-  stage: build docker image
+  stage: b&p acr
   image: docker:latest
   services:
     - docker:dind
@@ -40,3 +39,10 @@ docker_build:
     - docker build -t $ACR_REGISTRY_IMAGE .
     - docker login -u $ACR_REGISTRY_USER -p $ACR_REGISTRY_PASSWORD $ACR_REGISTRY
     - docker push $ACR_REGISTRY_IMAGE
+
+deploy:
+  stage: deploy to K8S
+  image: bitnami/kubectl:latest
+  script:
+    - echo "$KUBE_CONFIG" > kubeconfig.yml
+    - kubectl --kubeconfig=kubeconfig.yml apply -f deployment.yaml

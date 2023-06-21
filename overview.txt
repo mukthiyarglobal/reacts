@@ -1,0 +1,20 @@
+stages:
+  - build
+  - push
+
+build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE .
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker push $CI_REGISTRY_IMAGE
+
+*******************************************************************
+
+CI_REGISTRY: Set it to your ACR login server, e.g., youracr.azurecr.io.
+CI_REGISTRY_USER: Set it to your ACR username.
+CI_REGISTRY_PASSWORD: Set it to your ACR password.
+CI_REGISTRY_IMAGE:youracr.azurecr.io/yourimagename:latest
