@@ -37,6 +37,6 @@ docker_build:
   services:
     - docker:dind
   script:
-    - docker build -t mdpro .
-    - docker login -u $DB_USER -p $DB_PASSWORD
-    - docker push materialdashdemo.azurecr.io/mdpro:latest
+    - echo $ACR_REGISTRY_PASSWORD | docker login -u $ACR_REGISTRY_USER $ACR_REGISTRY --password-stdin
+    - docker build -t $ACR_REGISTRY_IMAGE .
+    - docker push $CI_REGISTRY_IMAGE
