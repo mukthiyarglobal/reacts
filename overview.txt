@@ -33,3 +33,4 @@ Make sure to replace KUBE_NAMESPACE with the desired namespace and KUBE_DEPLOYME
 
 Using either of these options, replace your-namespace with the actual namespace name where you want to deploy your application.
 
+$KUBE_DEPLOYMENT_FILE = deploy file name
