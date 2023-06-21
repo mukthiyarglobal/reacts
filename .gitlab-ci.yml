@@ -42,7 +42,9 @@ docker_build:
 
 deploy:
   stage: deploy to K8S
-  image: bitnami/kubectl:latest
+  image:
+    name: bitnami/kubectl:1.14
+    entrypoint: [""]
   script:
     - echo "$KUBE_CONFIG" > kubeconfig.yml
     - kubectl --kubeconfig=kubeconfig.yml apply -f $KUBE_DEPLOYMENT_FILE --namespace=$KUBE_NAMESPACE

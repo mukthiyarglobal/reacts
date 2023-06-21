@@ -18,3 +18,18 @@ CI_REGISTRY: Set it to your ACR login server, e.g., youracr.azurecr.io.
 CI_REGISTRY_USER: Set it to your ACR username.
 CI_REGISTRY_PASSWORD: Set it to your ACR password.
 CI_REGISTRY_IMAGE:youracr.azurecr.io/yourimagename:latest
+-----------------------------------------------------------------------------
+
+deploy:
+  stage: deploy
+  image: bitnami/kubectl:latest
+  script:
+    - echo "$KUBE_CONFIG" > kubeconfig.yml
+    - kubectl --kubeconfig=kubeconfig.yml apply -f $KUBE_DEPLOYMENT_FILE --namespace=$KUBE_NAMESPACE
+************************************************************************
+
+Make sure to replace KUBE_NAMESPACE with the desired namespace and KUBE_DEPLOYMENT_FILE with the path to your Kubernetes deployment manifest file.
+
+
+Using either of these options, replace your-namespace with the actual namespace name where you want to deploy your application.
+
