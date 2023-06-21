@@ -33,6 +33,7 @@ sonarcloud-check:
 
 docker_build:
   stage: build docker image
+  image: docker:latest
   script:
     - docker build -t mdpro .
     - docker login -u $DB_USER -p $DB_PASSWORD
