@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: materialdash
-  namespace: kube-system
+#  namespace: kube-system
 spec:
   selector:
     matchLabels:
