@@ -44,7 +44,7 @@ deploy:
   stage: deploy to K8S
   image:
     name: bitnami/kubectl:1.14
-    entrypoint: [""]
+#    entrypoint: [""]
   script:
     - echo "$KUBE_CONFIG" > kubeconfig.yml
     - kubectl --kubeconfig=kubeconfig.yml apply -f $KUBE_DEPLOYMENT_FILE --namespace=$KUBE_NAMESPACE

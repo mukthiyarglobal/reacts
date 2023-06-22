@@ -36,3 +36,7 @@ Using either of these options, replace your-namespace with the actual namespace 
 $KUBE_DEPLOYMENT_FILE = deploy file name
 
 kubectl get namespaces
+
+
+-kubeconfig=kubeconfig.yml: This flag specifies the path to the kubeconfig file, which contains the configuration details required to authenticate and connect to a Kubernetes cluster. By specifying the --kubeconfig flag with the value kubeconfig.yml, it indicates that the kubectl command should use the configuration defined in the kubeconfig.yml file to connect to the cluster.
+----------------------------------------------------------------------------------
