@@ -34,7 +34,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: md-lb
+  name: md-lb-svc
   labels:
     app: mydeployment
 spec:
