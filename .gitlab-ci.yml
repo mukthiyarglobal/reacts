@@ -47,4 +47,4 @@ deploy:
     entrypoint: [""]
   script:
     - echo "$KUBE_CONFIG" > kubeconfig.yml
-    - kubectl --kubeconfig=kubeconfig.yml apply -f $KUBE_DEPLOYMENT_FILE --namespace=$KUBE_NAMESPACE
+    - kubectl apply -f $KUBE_DEPLOYMENT_FILE
