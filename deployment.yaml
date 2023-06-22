@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: md-deoloy-test
-  namespace: mytestpro
+  namespace: kube-system
 spec:
   selector:
     matchLabels:
