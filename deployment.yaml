@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: md-deoloy-test
-  namespace: kube-system
+  namespace: mydemocluster
 spec:
   selector:
     matchLabels:
@@ -27,7 +27,7 @@ spec:
             memory: 256Mi
             cpu: "0.2"
       imagePullSecrets:
-        - name: myregistrykey
+        - name: mdregistrykey
 
 ---
 
