@@ -35,10 +35,10 @@ docker_build:
   image: docker:latest
   services:
     - docker:dind
+
   script:
-    - docker build -t $ACR_REGISTRY_IMAGE .
+    - docker build -t $ACR_REGISTRY_IMAGE:$CI_PIPELINE_IID .
     - docker login -u $ACR_REGISTRY_USER -p $ACR_REGISTRY_PASSWORD $ACR_REGISTRY
-    - COMMIT_SHA_SHORT=$(echo $CI_COMMIT_SHA | cut -c1-7)
     - docker tag $ACR_REGISTRY_IMAGE $ACR_REGISTRY_IMAGE:$CI_COMMIT_SHA
     - docker push $ACR_REGISTRY_IMAGE:$CI_COMMIT_SHA
 
