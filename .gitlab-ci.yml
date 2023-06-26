@@ -38,7 +38,8 @@ docker_build:
   script:
     - docker build -t $ACR_REGISTRY_IMAGE .
     - docker login -u $ACR_REGISTRY_USER -p $ACR_REGISTRY_PASSWORD $ACR_REGISTRY
-    - docker push $ACR_REGISTRY_IMAGE
+    - docker tag $ACR_REGISTRY_IMAGE $ACR_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker push $ACR_REGISTRY_IMAGE:$CI_COMMIT_SHA
 
 deploy:
   stage: deploy to K8S
