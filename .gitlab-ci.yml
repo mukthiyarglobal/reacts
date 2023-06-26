@@ -2,7 +2,8 @@ image: node:16
 stages:          # List of stages for jobs, and their order of execution
   - build
   - test
-  - b&p acr
+  - docker_build
+  - push to ACR
   - deploy to K8S
 
 build-job:
@@ -31,13 +32,21 @@ sonarcloud-check:
     - develop
 
 docker_build:
-  stage: b&p acr
+  stage: docker_build
   image: docker:latest
   services:
     - docker:dind
 
   script:
     - docker build -t $ACR_REGISTRY_IMAGE:$CI_PIPELINE_IID .
+
+docker_push:
+  stage: push to ACR
+  image: docker:latest
+  services:
+    - docker:dind
+
+  script:
     - docker login -u $ACR_REGISTRY_USER -p $ACR_REGISTRY_PASSWORD $ACR_REGISTRY
     - docker push $ACR_REGISTRY_IMAGE:$CI_PIPELINE_IID
 
