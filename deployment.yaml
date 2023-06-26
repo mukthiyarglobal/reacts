@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: reactapp
-        image: materialdashdemo.azurecr.io/mdproject
+        image: materialdashdemo.azurecr.io/mdproject:44
         imagePullPolicy: Always
         ports:
         - containerPort: 80
