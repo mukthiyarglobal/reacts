@@ -2,7 +2,7 @@ image: node:16
 stages:          # List of stages for jobs, and their order of execution
   - build
   - test
-  - b&p acr
+  - build&push to acr
   - deploy to K8S
 
 build-job:
@@ -31,7 +31,7 @@ sonarcloud-check:
     - develop
 
 docker_build:
-  stage: b&p acr
+  stage: build&push to acr
   image: docker:latest
   services:
     - docker:dind
