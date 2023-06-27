@@ -32,7 +32,7 @@ sonarcloud-check:
 
 docker_build:
   stage: b&p acr
-  image: docker:latest
+  image: docker:stable-dind
   services:
     - docker:dind
   script:
