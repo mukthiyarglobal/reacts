@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: md-deoloy-test
+  name: material-dashboard
   namespace: mydemocluster
 spec:
   selector:
@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: reactapp
-        image: materialdashdemo.azurecr.io/mdproject:45
+        image: materialdashdemo.azurecr.io/mdproject:47
         imagePullPolicy: Always
         ports:
         - containerPort: 80
