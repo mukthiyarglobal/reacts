@@ -36,10 +36,10 @@ docker_build:
   services:
     - docker:dind
   script:
-    - export IMAGE_TAG=$(date +%Y%m%d%H%M%S)
-    - docker build -t $ACR_REGISTRY_IMAGE:$IMAGE_TAG .
+#    - export IMAGE_TAG=$(date +%Y%m%d%H%M%S)
+    - docker build -t $ACR_REGISTRY_IMAGE:$CI_PIPELINE_IID .
     - docker login -u $ACR_REGISTRY_USER -p $ACR_REGISTRY_PASSWORD $ACR_REGISTRY
-    - docker push $ACR_REGISTRY_IMAGE:$IMAGE_TAG
+    - docker push $ACR_REGISTRY_IMAGE:$CI_PIPELINE_IID
 
 
 deploy:
@@ -49,4 +49,4 @@ deploy:
     entrypoint: [""]
   script:
     - echo "$KUBE_CONFIG" > kubeconfig.yml
-    - kubectl --kubeconfig=kubeconfig.yml apply --set=image.tag=${LATEST_TAG} -f $KUBE_DEPLOYMENT_FILE --namespace=$KUBE_NAMESPACE
+    - kubectl --kubeconfig=kubeconfig.yml apply -f $KUBE_DEPLOYMENT_FILE --namespace=$KUBE_NAMESPACE
