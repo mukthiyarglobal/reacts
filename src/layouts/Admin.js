@@ -96,7 +96,7 @@ export default function Admin({ ...rest }) {
     <div className={classes.wrapper}>
       <Sidebar
         routes={routes}
-        logoText={"BG DevSecOps Team"}
+        logoText={"DevOps Team"}
         logo={logo}
         image={image}
         handleDrawerToggle={handleDrawerToggle}

@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: reactapp
-        image: materialdashdemo.azurecr.io/mdproject:48
+        image: materialdashdemo.azurecr.io/mdproject:$CI_PIPELINE_IID
         imagePullPolicy: Always
         ports:
         - containerPort: 80
