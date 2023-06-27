@@ -35,11 +35,12 @@ docker_build:
   image: docker:latest
   services:
     - docker:dind
-
   script:
-    - docker build -t $ACR_REGISTRY_IMAGE:$CI_PIPELINE_IID .
+    - docker build -t $ACR_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
     - docker login -u $ACR_REGISTRY_USER -p $ACR_REGISTRY_PASSWORD $ACR_REGISTRY
-    - docker push $ACR_REGISTRY_IMAGE:$CI_PIPELINE_IID
+    - docker push $ACR_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  variables:
+    DOCKER_IMAGE_TAG: "$CI_COMMIT_REF_SLUG" # Store the CI_COMMIT_REF_SLUG in a variable
 
 deploy:
   stage: deploy to K8S
@@ -48,4 +49,5 @@ deploy:
     entrypoint: [""]
   script:
     - echo "$KUBE_CONFIG" > kubeconfig.yml
-    - kubectl --kubeconfig=kubeconfig.yml apply -f $KUBE_DEPLOYMENT_FILE --namespace=$KUBE_NAMESPACE
+    - TAG=$(docker search --no-trunc $ACR_REGISTRY_IMAGE | awk '{if(NR==2) print substr($0, index($0,$2))}') # Fetch latest image tag from registry
+    - kubectl --kubeconfig=kubeconfig.yml apply -f $KUBE_DEPLOYMENT_FILE --namespace=$KUBE_NAMESPACE --record --record=true --image=$ACR_REGISTRY_IMAGE:$TAG
