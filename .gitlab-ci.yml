@@ -34,11 +34,13 @@ docker_build:
   stage: b&p acr
   image: docker:latest
   services:
-    - docker:dind # allows developers to run a Docker container within an already running Docker container to support CI/CD pipelines.
+    - docker:dind
   script:
-    - docker build -t $ACR_REGISTRY_IMAGE:${LATEST_TAG} .
+    - export IMAGE_TAG=$(date +%Y%m%d%H%M%S)
+    - docker build -t $ACR_REGISTRY_IMAGE:$IMAGE_TAG .
     - docker login -u $ACR_REGISTRY_USER -p $ACR_REGISTRY_PASSWORD $ACR_REGISTRY
-    - docker push $ACR_REGISTRY_IMAGE:${LATEST_TAG}
+    - docker push $ACR_REGISTRY_IMAGE:$IMAGE_TAG
+
 
 deploy:
   stage: deploy to K8S
