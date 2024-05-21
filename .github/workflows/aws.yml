@@ -7,7 +7,7 @@ on:
 env:
   ECR_REPOSITORY: reactrepo
   ECS_SERVICE: reactapp-service
-  ECS_CLUSTER: react-cluster               
+  ECS_CLUSTER: react-cluster
   CONTAINER_NAME: reactrepo-container
 
 permissions:
@@ -36,12 +36,11 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           PIPELINE_NUMBER: ${{ github.run_number }}
-          IMAGE_TAG: latest-${{ github.run_number }}
+          IMAGE_TAG: $PIPELINE_NUMBER
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest-${PIPELINE_NUMBER}  # Tag with latest and pipeline number
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest-${PIPELINE_NUMBER}
-          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:latest-${PIPELINE_NUMBER}"
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
       - name: Download task definition
         run: |
