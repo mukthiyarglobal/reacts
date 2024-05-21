@@ -7,18 +7,15 @@ on:
 env:
   ECR_REPOSITORY: reactrepo
   ECS_SERVICE: reactapp-service
-  ECS_CLUSTER: react-cluster             
+  ECS_CLUSTER: react-cluster              
   CONTAINER_NAME: reactrepo-container
 
 permissions:
   contents: read
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -39,11 +36,11 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           PIPELINE_NUMBER: ${{ github.run_number }}
-          IMAGE_TAG: $ECR_REGISTRY/$ECR_REPOSITORY:${PIPELINE_NUMBER}
+          IMAGE_TAG: "v${{ github.run_number }}"
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$PIPELINE_NUMBER .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$PIPELINE_NUMBER
-          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$PIPELINE_NUMBER"
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
       - name: Download task definition
         run: |
