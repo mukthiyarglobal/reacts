@@ -2,7 +2,7 @@ name: Deploy to Amazon ECS
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [main]
 
 env:
   ECR_REPOSITORY: reactrepo
@@ -31,29 +31,38 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, tag, and push image to Amazon ECR
-        id: build-image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          PIPELINE_NUMBER: ${{ github.run_number }}
-          IMAGE_TAG: "v${{ github.run_number }}"
+      - name: Build and push images to Amazon ECR
+        id: build-images
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          for i in {1..2}; do
+            PIPELINE_NUMBER="v$i"
+            docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$PIPELINE_NUMBER .
+            docker push $ECR_REGISTRY/$ECR_REPOSITORY:$PIPELINE_NUMBER
+          done
+
+      - name: Get previous "latest" image tag
+        id: get-previous-latest-tag
+        run: |
+          PREVIOUS_LATEST=$(aws ecr describe-images --repository-name $ECR_REPOSITORY --query 'sort_by(imageDetails,& imagePushedAt)[?imageTags[0]==`latest`].imageTags[-1]' --output text)
+          echo "::set-output name=previous_latest::$PREVIOUS_LATEST"
+
+      - name: Delete previous "latest" image tag
+        if: steps.get-previous-latest-tag.outputs.previous_latest != ''
+        run: |
+          aws ecr batch-delete-image --repository-name $ECR_REPOSITORY --image-ids imageTag=${{ steps.get-previous-latest-tag.outputs.previous_latest }}
 
       - name: Download task definition
         run: |
           aws ecs describe-task-definition --task-definition reactapp-family \
           --query taskDefinition > task-definition.json
 
-      - name: Fill in the new image ID in the Amazon ECS task definition
+      - name: Fill in the new image IDs in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
           container-name: ${{ env.CONTAINER_NAME }}
-          image: ${{ steps.build-image.outputs.image }}
+          image: ${{ steps.build-images.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
