@@ -36,8 +36,9 @@ jobs:
         run: |
           for i in {1..2}; do
             PIPELINE_NUMBER="v$i"
-            docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$PIPELINE_NUMBER .
-            docker push $ECR_REGISTRY/$ECR_REPOSITORY:$PIPELINE_NUMBER
+            TAGGED_IMAGE=$ECR_REGISTRY/$ECR_REPOSITORY:$PIPELINE_NUMBER
+            docker build -t $TAGGED_IMAGE .
+            docker push $TAGGED_IMAGE
           done
 
       - name: Get previous "latest" image tag
