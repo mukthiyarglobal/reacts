@@ -42,7 +42,7 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:v${PIPELINE_NUMBER}
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:v${PIPELINE_NUMBER} $ECR_REGISTRY/$ECR_REPOSITORY:latest
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-          echo "::set-output name=image::$ECR_REGISTRY/$REPOSITORY:latest
+          echo "::set-output name=image::$ECR_REGISTRY/$REPOSITORY:latest"
 
       - name: Remove Previous "latest" Tag
         run: |
