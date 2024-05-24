@@ -31,39 +31,37 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build and push images to Amazon ECR
-        id: build-images
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          PIPELINE_NUMBER: ${{ github.run_number }}
+          IMAGE_TAG: "v${{ github.run_number }}"
         run: |
-          for i in {1..2}; do
-            PIPELINE_NUMBER="v$i"
-            TAGGED_IMAGE=$ECR_REGISTRY/$ECR_REPOSITORY:$PIPELINE_NUMBER
-            docker build -t $TAGGED_IMAGE .
-            docker push $TAGGED_IMAGE
-          done
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:v${PIPELINE_NUMBER} .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:v${PIPELINE_NUMBER}
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:v${PIPELINE_NUMBER} $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
-      - name: Get previous "latest" image tag
-        id: get-previous-latest-tag
+      - name: Remove Previous "latest" Tag
         run: |
-          PREVIOUS_LATEST=$(aws ecr describe-images --repository-name $ECR_REPOSITORY --query 'sort_by(imageDetails,& imagePushedAt)[?imageTags[0]==`latest`].imageTags[-1]' --output text)
-          echo "::set-output name=previous_latest::$PREVIOUS_LATEST"
-
-      - name: Delete previous "latest" image tag
-        if: steps.get-previous-latest-tag.outputs.previous_latest != ''
-        run: |
-          aws ecr batch-delete-image --repository-name $ECR_REPOSITORY --image-ids imageTag=${{ steps.get-previous-latest-tag.outputs.previous_latest }}
+          IMAGE_ID=$(docker images -q $ECR_REGISTRY/$ECR_REPOSITORY:latest)
+          if [ ! -z "$IMAGE_ID" ]; then
+            docker rmi $IMAGE_ID
+          fi
 
       - name: Download task definition
         run: |
           aws ecs describe-task-definition --task-definition reactapp-family \
           --query taskDefinition > task-definition.json
 
-      - name: Fill in the new image IDs in the Amazon ECS task definition
+      - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
           container-name: ${{ env.CONTAINER_NAME }}
-          image: ${{ steps.build-images.outputs.image }}
+          image: ${{ steps.build-image.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
