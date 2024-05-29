@@ -50,6 +50,7 @@ jobs:
       #     if [ ! -z "$IMAGE_ID" ]; then
       #       docker rmi $IMAGE_ID
       #     fi
+      
 
       # - name: Download task definition
       #   run: |
